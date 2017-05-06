@@ -68,8 +68,8 @@ def main():
     print predicted
     
     # generate class probabilities
-    probs = model2.predict_proba(X_test)
-    print probs
+    #probs = model2.predict_proba(X_test)
+    #print probs
 
 if __name__ == "__main__":
     main()
