@@ -13,8 +13,8 @@ import matplotlib
 def main():
 
     # load dataset
-    ratings = pd.read_csv('C:\\Users\\refae\\Desktop\\data\\ratings.csv')
-    movies = pd.read_csv('C:\\Users\\refae\\Desktop\\data\\movies.csv')
+    ratings = pd.read_csv('data\\ratings.csv')
+    movies = pd.read_csv('data\\movies.csv')
 
     # movies['rating'] = ratings.query('movieId == @movies.movieId')['rating'].mean()
     # movies['rating'] = (ratings[ratings['movieId'] == movies.movieId])['rating'].mean()
@@ -26,7 +26,11 @@ def main():
     for i, row in movies.iterrows():
         b = ratings[(ratings['movieId'] == row['movieId'])]
         movies.set_value(i, 'num_rating', b.shape[0])
-        movies.set_value(i, 'rating', 0 if math.isnan(b['rating'].mean()) else int(20*b['rating'].mean()))
+        # rating = 0 if math.isnan(b['rating'].mean()) else int(b['rating'].mean())
+        rating = b['rating'].mean()
+        movies.set_value(i, 'rating', rating)
+
+        movies.set_value(i, 'higherThanThree', 1 if rating > 3.0 else 0)
 
         for g in geners:
             movies.set_value(i, g, int(g in row['genres']))
@@ -38,7 +42,7 @@ def main():
     #print movies.head(100)
 
     # create dataframes with an intercept column
-    y, X = patsy.dmatrices('rating ~ num_rating + Year + Comedy + Adventure + Animation + Children + Fantasy + \
+    y, X = patsy.dmatrices('higherThanThree ~ rating +num_rating + Year + Comedy + Adventure + Animation + Children + Fantasy + \
                        Romance + Drama + Action + Crime + Thriller + Documentary + Mystery + Musical + Horror',
                        movies, return_type="dataframe")
 
