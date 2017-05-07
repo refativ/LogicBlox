@@ -4,7 +4,7 @@ import patsy
 import re
 import math
 from sklearn.linear_model import LogisticRegression
-from sklearn.cross_validation import train_test_split
+from sklearn.model_selection import train_test_split
 #from sklearn import metrics
 #from sklearn.cross_validation import cross_val_score
 import matplotlib.pyplot as plt
