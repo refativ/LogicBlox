@@ -30,7 +30,7 @@ def main():
         rating = b['rating'].mean()
         movies.set_value(i, 'rating', rating)
 
-        movies.set_value(i, 'higherThanThree', 1 if rating > 3.0 else 0)
+        movies.set_value(i, 'higherThanFour', 1 if rating > 4.0 else 0)
 
         for g in geners:
             movies.set_value(i, g, int(g in row['genres']))
@@ -42,8 +42,10 @@ def main():
     #print movies.head(100)
 
     # create dataframes with an intercept column
-    y, X = patsy.dmatrices('higherThanThree ~  num_rating + Year + Comedy + Adventure + Animation + Children + Fantasy + \
-                       Romance + Drama + Action + Crime + Thriller + Documentary + Mystery + Musical + Horror',
+    y, X = patsy.dmatrices('higherThanFour ~   num_rating + Year + Comedy + Adventure + Animation + Children + Fantasy + \
+                       Romance +  Action + Crime + Thriller + Documentary + Mystery + Musical + Horror + \
+                           (Action * Thriller) + (Crime *  Mystery) + (I(Year > 2000) * Documentary) + \
+                           I(num_rating > 200)',
                        movies, return_type="dataframe")
 
     # flatten y into a 1-D array
@@ -60,7 +62,7 @@ def main():
     print y.mean()
 
     # examine the coefficients
-    pd.DataFrame(zip(X.columns, np.transpose(model.coef_)))
+    print pd.DataFrame(zip(X.columns, np.transpose(model.coef_)))
 
     # evaluate the model by splitting into train and test sets
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=0)
@@ -72,8 +74,8 @@ def main():
     print predicted
     
     # generate class probabilities
-    #probs = model2.predict_proba(X_test)
-    #print probs
+    probs = model2.predict_proba(X_test)
+    print probs
 
 if __name__ == "__main__":
     main()
