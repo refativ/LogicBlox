@@ -42,7 +42,7 @@ def main():
     #print movies.head(100)
 
     # create dataframes with an intercept column
-    y, X = patsy.dmatrices('higherThanThree ~ rating +num_rating + Year + Comedy + Adventure + Animation + Children + Fantasy + \
+    y, X = patsy.dmatrices('higherThanThree ~  num_rating + Year + Comedy + Adventure + Animation + Children + Fantasy + \
                        Romance + Drama + Action + Crime + Thriller + Documentary + Mystery + Musical + Horror',
                        movies, return_type="dataframe")
 
