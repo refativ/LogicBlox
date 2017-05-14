@@ -5,6 +5,7 @@ import re
 import math
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
+import sales as s
 #from sklearn import metrics
 #from sklearn.cross_validation import cross_val_score
 import matplotlib.pyplot as plt
@@ -78,4 +79,4 @@ def main():
     print probs
 
 if __name__ == "__main__":
-    main()
+    s.sales()
