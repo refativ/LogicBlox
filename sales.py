@@ -3,6 +3,7 @@ import pandas as pd
 import patsy
 import re
 import math
+import numbers
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 
@@ -10,22 +11,44 @@ def sales():
 
     # load dataset
     sales = pd.read_csv('realData\\technion_retail_obfuscated.csv')
-    cols = sales.columns.values.tolist()
-    print cols
 
     for i, row in sales.iterrows():
         sales.set_value(i, 'higherThanOne', 1 if row['sales'] > 1 else 0)
+    cols = sales.columns.values.tolist()
 
+    dict = {}
+    counters = {}
+    for col in cols:
+        dict[col] = {}
+        counters[col] = 1
+    sales = sales.fillna(-1)
+    for i, row in sales.iterrows():
+        print i
+        for col in cols:
+            if not isinstance(row[col], numbers.Number):
+                if not row[col] in dict[col]:
+                    dict[col][row[col]] = counters[col]
+                    counters[col] = counters[col] + 1
+                sales.set_value(i, col, dict[col][row[col]])
+
+    print sales
+
+    #for i, row in sales.iterrows():
+    #    for col in cols:
+    #        if not isinstance(row[col], numbers.Number):
+    #            print dict[col][row[col]]
+     #       else:
+    #            print row[col]
     # create dataframes with an intercept column
     # s = [key for key in dict(sales.dtypes) if dict(sales.dtypes)[key] not in ['float64', 'int64']]
-    sales_with_dummies = pd.get_dummies(sales).fillna(-1)
+    #sales_with_dummies = pd.get_dummies(sales).fillna(-1)
     # print sales_with_dummies
-    sales_with_dummies.rename(columns=lambda x: re.sub('[\{ | \} | \( | \) | / | \[ | \] | ^]', '_', x), inplace=True)
-    cols = sales_with_dummies.columns.values.tolist()
-    print cols
+    #sales_with_dummies.rename(columns=lambda x: re.sub('[\{ | \} | \( | \) | / | \[ | \] | ^]', '_', x), inplace=True)
+    #cols = sales_with_dummies.columns.values.tolist()
+    #print cols
     # str = "higherThanOne" + " ~ " + " + ".join(cols[1:])
-    str = "higherThanOne" + " ~ " + " + ".join(x for x in cols if not x in ["sales"])
-    print str
+    #str = "higherThanOne" + " ~ " + " + ".join(x for x in cols if not x in ["sales"])
+    #print str
     # y, X = patsy.dmatrices(str, sales_with_dummies, return_type="dataframe")
 
     # flatten y into a 1-D array
