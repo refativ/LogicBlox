@@ -17,15 +17,16 @@ def sales():
         sales.set_value(i, 'higherThanOne', 1 if row['sales'] > 1 else 0)
 
     # create dataframes with an intercept column
-    s = [key for key in dict(sales.dtypes) if dict(sales.dtypes)[key] not in ['float64', 'int64']]
+    # s = [key for key in dict(sales.dtypes) if dict(sales.dtypes)[key] not in ['float64', 'int64']]
     sales_with_dummies = pd.get_dummies(sales).fillna(-1)
-    print sales_with_dummies
-
-
-    str = "higherThanOne" + " ~ " + " + ".join(cols[1:])
-    #str = "higherThanOne" + " ~ " + " + ".join(x for x in cols[1:] if not x in ["sales", "promo_type", "promo_flyer_category", "postholiday2", "calendar_recent_52", "preholidaykernel", "postholiday1", "discount_elasticity", "price_elasticity", "clearance_indicator", "postholiday3", "preweeksale4", "preweeksale2", "preweeksale3", "preweeksale1", "temperature_high_peak", "discount", "temperature_low", "average_review", "preholiday4", "preholiday1", "preholiday3", "promo_indicator", "preholiday5", "preholiday2"])
-    #print str
-    #y, X = patsy.dmatrices(str, sales, return_type="dataframe")
+    # print sales_with_dummies
+    sales_with_dummies.rename(columns=lambda x: re.sub('[\{ | \} | \( | \) | / | \[ | \] | ^]', '_', x), inplace=True)
+    cols = sales_with_dummies.columns.values.tolist()
+    print cols
+    # str = "higherThanOne" + " ~ " + " + ".join(cols[1:])
+    str = "higherThanOne" + " ~ " + " + ".join(x for x in cols if not x in ["sales"])
+    print str
+    # y, X = patsy.dmatrices(str, sales_with_dummies, return_type="dataframe")
 
     # flatten y into a 1-D array
     #y = np.ravel(y)
@@ -55,6 +56,3 @@ def sales():
     # generate class probabilities
     #probs = model2.predict_proba(X_test)
     #print probs
-
-if __name__ == "__main__":
-    main()
